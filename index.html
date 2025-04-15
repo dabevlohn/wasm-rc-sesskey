@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8" />
+    <title>SSG Tracker example</title>
+    <script type="text/javascript" src="./index-func.js"></script>
+    <!--link rel="preload" href="./index-wasm.js" as="script" /-->
+  </head>
+  <body>
+    <script type="module" src="./index-wasm.js"></script>
+    <h1>SSG Tracker example</h1>
+    <p>
+      There are some links for a SSG Tracker: <a href="/">Index</a> |
+      <a href="/page1.html">Page 1</a> | <a href="/page2.html">Page 2</a> |
+      <a href="/#hash1">Hash 1</a> | <a href="/#hash2">Hash 2</a> |
+      <a href="/about.html">About</a>
+    </p>
+    <textarea cols="50" rows="10" id="tracker-log-1"></textarea>
+    <textarea cols="50" rows="10" id="tracker-log-2"></textarea>
+  </body>
+</html>
