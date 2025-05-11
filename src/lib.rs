@@ -1,7 +1,8 @@
-use base64::{engine::general_purpose::URL_SAFE_NO_PAD, Engine as _};
+use base64::{
+    engine::general_purpose::STANDARD, engine::general_purpose::URL_SAFE_NO_PAD, Engine as _,
+};
 use gloo_utils::format::JsValueSerdeExt;
 use rand_core::RngCore;
-use reqwest;
 use rsa::pkcs8::DecodePublicKey;
 use rsa::{Pkcs1v15Encrypt, RsaPublicKey};
 use serde_json::json;
@@ -16,14 +17,21 @@ pub async fn generate_aes_key(rid: String) -> Result<JsValue, JsValue> {
     rng.fill_bytes(&mut data);
 
     let sesskey = json!({
+        // "k": "_4TUgAAz5jqmpfS0a8to2g",
+        "k": format!("{}",URL_SAFE_NO_PAD.encode(data)),
         "kty": "oct",
         "alg": "A128CBC",
-        "k": format!("{}",URL_SAFE_NO_PAD.encode(data)),
         "ext": true,
         "key_ops": ["encrypt", "decrypt"]
     });
 
-    //log(&sesskey.to_string());
+    // log(&sesskey.to_string());
+    // let data_st = URL_SAFE_NO_PAD.decode("_4TUgAAz5jqmpfS0a8to2g").unwrap();
+
+    let key_string: String = STANDARD.encode(sesskey.to_string());
+    let _key_id: String = key_string.chars().take(12).collect();
+
+    // log(&key_id);
 
     let pubkey_pem = r#"
 -----BEGIN PUBLIC KEY-----
@@ -46,33 +54,34 @@ VQIDAQAB
         .encrypt(&mut rng, Pkcs1v15Encrypt, &data)
         .map_err(|e| JsValue::from_str(&format!("Encryption failed: {}", e)))?;
 
-    // log(&format!("{:?}", URL_SAFE_NO_PAD.encode(encdata.clone())));
+    log(&format!("{:?}", URL_SAFE_NO_PAD.encode(encdata.clone())));
 
     // Отправка данных на сервер
-    let url = format!(
-        "http://localhost:8000/?rid={}&sesskey={}",
-        rid,
-        URL_SAFE_NO_PAD.encode(encdata)
-    );
+    // let url = format!(
+    //     "http://localhost:8000/?rid={}&sesskey={}",
+    //     rid,
+    //     URL_SAFE_NO_PAD.encode(encdata)
+    // );
 
-    let client = reqwest::Client::new();
-    let response = client
-        .get(url)
-        .send()
-        .await
-        .map_err(|e| JsValue::from_str(&format!("Request error: {}", e)))?;
+    // let client = reqwest::Client::new();
+    // let response = client
+    //     .get(url)
+    //     .send()
+    //     .await
+    //     .map_err(|e| JsValue::from_str(&format!("Request error: {}", e)))?;
 
-    if response.status().is_success() {
-        log("Data sent successfully");
-        JsValue::from_serde(&sesskey)
-            .map_err(|e| JsValue::from_str(&format!("Serialization error: {}", e)))
-    } else {
-        log(response.status().as_str());
-        Err(JsValue::from_str(&format!(
-            "Server error: {}",
-            response.status()
-        )))
-    }
+    // if response.status().is_success() {
+    //     log("Data sent successfully");
+    // } else {
+    //     log(response.status().as_str());
+    //     Err(JsValue::from_str(&format!(
+    //         "Server error: {}",
+    //         response.status()
+    //     )))
+    // }
+
+    JsValue::from_serde(&sesskey)
+        .map_err(|e| JsValue::from_str(&format!("Serialization error: {}", e)))
 }
 
 #[wasm_bindgen]
