@@ -80,8 +80,6 @@ pub async fn generate_aes_key(rid: String) -> Result<JsValue, JsValue> {
     // }
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    log("Generated for {rid}!");
-
     // Возврат составного объекта
     JsValue::from_serde(&sesskey)
         .map_err(|e| JsValue::from_str(&format!("Serialization error: {}", e)))

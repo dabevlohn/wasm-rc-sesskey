@@ -1,0 +1,21 @@
+{
+  "name": "back-nodejs",
+  "version": "0.1.1",
+  "description": "Simple Node js Express App",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npm install"
+  },
+  "author": "WTF?",
+  "license": "ISC",
+  "dependencies": {
+    "ejson": "^2.2.3",
+    "express": "^4.18.2",
+    "js-base64": "^3.7.7",
+    "mocha": "^10.2.0",
+    "node-wasm": "^0.1.4",
+    "pkg": "^5.8.1",
+    "wasm-sesskey": "file:../pkg"
+  }
+}
