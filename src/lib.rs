@@ -1,6 +1,4 @@
-use base64::{
-    engine::general_purpose::STANDARD, engine::general_purpose::URL_SAFE_NO_PAD, Engine as _,
-};
+use base64::{engine::general_purpose::URL_SAFE_NO_PAD, Engine as _};
 use gloo_utils::format::JsValueSerdeExt;
 use rand_core::RngCore;
 use rsa::pkcs8::DecodePublicKey;
@@ -45,19 +43,14 @@ pub async fn generate_aes_key(_rid: String) -> Result<JsValue, JsValue> {
     // Сессионный ключ в формате CryptoKey Object
     let sesskey = json!({
         // Бинарные 16 байт кодируются в Base64URI
-        "k": format!("{}",URL_SAFE_NO_PAD.encode(data)), // {{
-        "kty": "oct",                                    // CryptoKey
-        "alg": "A128CBC",                                // JS
-        "ext": true,                                     // Object
-        "key_ops": ["encrypt", "decrypt"],               // }}
+        "k": format!("{}", URL_SAFE_NO_PAD.encode(data)),    // {{
+        "kty": "oct",                                        // CryptoKey
+        "alg": "A128CBC",                                    // JS
+        "ext": true,                                         // Object
+        "key_ops": ["encrypt", "decrypt"],                   // }}
         // Зашифрованный сессионный ключ кодируется в Base64URI
-        "ck": URL_SAFE_NO_PAD.encode(encdata)            // дополнение
+        "ck": format!("{}", URL_SAFE_NO_PAD.encode(encdata)) // дополнение
     });
-
-    // Идентификатор сгенерированного ключа формируется по методике,
-    // которая получена путём реверс-инжиниринга кода RocketChat
-    let key_string: String = STANDARD.encode(sesskey.to_string());
-    let _key_id: String = key_string.chars().take(12).collect();
 
     // Отправка данных на сервер используется только при работе на клиенте.
     // Базовый сценарий: модуль в составе бэкенда, где за сохранение результата
