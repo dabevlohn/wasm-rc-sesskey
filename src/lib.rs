@@ -26,7 +26,7 @@ VQIDAQAB
 /// который предоставлен ДИБ в PEM-формате, после чего возвращает
 /// совмещённый результат в одном объекте
 #[wasm_bindgen]
-pub async fn generate_aes_key(_rid: String) -> Result<JsValue, JsValue> {
+pub async fn generate_aes_key(rid: String) -> Result<JsValue, JsValue> {
     // Случайные данные для генерации сессионного ключа
     let mut rng = rand_core::OsRng;
     let mut data = [0u8; 16];
@@ -79,6 +79,8 @@ pub async fn generate_aes_key(_rid: String) -> Result<JsValue, JsValue> {
     //     )))
     // }
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    log("Generated for {rid}!");
 
     // Возврат составного объекта
     JsValue::from_serde(&sesskey)
